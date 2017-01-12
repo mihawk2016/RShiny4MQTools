@@ -1,5 +1,6 @@
 library(shiny)
 
+<<<<<<< HEAD
 #### SHINY-SERVER { ####
 
 
@@ -17,3 +18,20 @@ shinyServer(function(input, output) {
   output$file.upload <- ntext
   
 })
+=======
+# Define server logic required to draw a histogram
+shinyServer(function(input, output) {
+   
+  output$distPlot <- renderPlot({
+    
+    # generate bins based on input$bins from ui.R
+    x    <- faithful[, 2] 
+    bins <- seq(min(x), max(x), length.out = input$bins + 1)
+    
+    # draw the histogram with the specified number of bins
+    hist(x, breaks = bins, col = 'darkgray', border = 'white')
+    
+  })
+  
+})
+>>>>>>> a1ae3fff12fd4cd2671e5816485c05525c01e142
