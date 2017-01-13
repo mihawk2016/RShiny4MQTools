@@ -50,7 +50,6 @@ file.uploader <- box(
     file.uploader.upload,
     file.uploader.clear,
     hr()
-    
   )
 )
 

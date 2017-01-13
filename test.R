@@ -1,5 +1,5 @@
 # if (interactive()) {
-  
+
   ui <- fluidPage(
     actionButton("update", "Update other buttons"),
     br(),

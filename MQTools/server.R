@@ -4,10 +4,6 @@ library(shiny)
 
 
 
-
-
-
-
 #### SHINY-SERVER } ####
 
 shinyServer(function(input, output) {
