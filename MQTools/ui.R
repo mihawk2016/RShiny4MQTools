@@ -1,7 +1,6 @@
 library(shiny)
 library(shinydashboard)
 
-<<<<<<< HEAD
 #### PAGE { ####
 
 #### + HEADER ####
@@ -9,14 +8,6 @@ library(shinydashboard)
 dashboard.header <- dashboardHeader(title = 'MetaQuote Tools')
 
 #### + SIDEBAR ####
-=======
-
-#### HEADER ####
-
-dashboard.header <- dashboardHeader(title = 'MetaQuote Tools')
-
-#### SIDEBAR ####
->>>>>>> a1ae3fff12fd4cd2671e5816485c05525c01e142
 
 dashboard.sidebar <- dashboardSidebar(
   sidebarMenu(
@@ -27,7 +18,6 @@ dashboard.sidebar <- dashboardSidebar(
   )
 )
 
-<<<<<<< HEAD
 #### + BODY { ####
 
 #### ++ FILE UPLOADER { ####
@@ -62,17 +52,6 @@ file.uploader <- box(
     hr()
     
   )
-=======
-#### BODY ####
-
-#### UPLOAD ####
-
-upload <- fileInput(
-  inputId = 'file.upload',
-  label = 'Upload files',
-  multiple = T,
-  width = '50%'
->>>>>>> a1ae3fff12fd4cd2671e5816485c05525c01e142
 )
 
 
@@ -138,9 +117,6 @@ dashboard.body <- dashboardBody(
 
 <<<<<<< HEAD
 #### PAGE } ####
-=======
-#### PAGE ####
->>>>>>> a1ae3fff12fd4cd2671e5816485c05525c01e142
 
 dashboardPage(
   dashboard.header,
