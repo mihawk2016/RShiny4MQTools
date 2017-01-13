@@ -1,6 +1,10 @@
 library(shiny)
 library(shinydashboard)
 
+<<<<<<< HEAD
+#### PAGE { ####
+=======
+<<<<<<< HEAD
 #### PAGE { ####
 
 #### + HEADER ####
@@ -8,6 +12,19 @@ library(shinydashboard)
 dashboard.header <- dashboardHeader(title = 'MetaQuote Tools')
 
 #### + SIDEBAR ####
+=======
+>>>>>>> 3e13d758f0005cbac64766b88599b0b2a7c3e279
+
+#### HEADER ####
+
+dashboard.header <- dashboardHeader(title = 'MetaQuote Tools')
+
+<<<<<<< HEAD
+#### + SIDEBAR ####
+=======
+#### SIDEBAR ####
+>>>>>>> a1ae3fff12fd4cd2671e5816485c05525c01e142
+>>>>>>> 3e13d758f0005cbac64766b88599b0b2a7c3e279
 
 dashboard.sidebar <- dashboardSidebar(
   sidebarMenu(
@@ -18,6 +35,10 @@ dashboard.sidebar <- dashboardSidebar(
   )
 )
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 3e13d758f0005cbac64766b88599b0b2a7c3e279
 #### + BODY { ####
 
 #### ++ FILE UPLOADER { ####
@@ -51,6 +72,20 @@ file.uploader <- box(
     file.uploader.clear,
     hr()
   )
+<<<<<<< HEAD
+=======
+=======
+#### BODY ####
+
+#### UPLOAD ####
+
+upload <- fileInput(
+  inputId = 'file.upload',
+  label = 'Upload files',
+  multiple = T,
+  width = '50%'
+>>>>>>> a1ae3fff12fd4cd2671e5816485c05525c01e142
+>>>>>>> 3e13d758f0005cbac64766b88599b0b2a7c3e279
 )
 
 
@@ -67,12 +102,24 @@ tabbox.report <- tabBox(
   tabbox.report.tickets
 )
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> 3e13d758f0005cbac64766b88599b0b2a7c3e279
 #### + BODY } ####
 
 dashboard.body <- dashboardBody(
   # Boxes need to be put in a row (or column)
   file.uploader,
   file.uploader,
+<<<<<<< HEAD
+=======
+=======
+dashboard.body <- dashboardBody(
+  # Boxes need to be put in a row (or column)
+  upload,
+>>>>>>> a1ae3fff12fd4cd2671e5816485c05525c01e142
+>>>>>>> 3e13d758f0005cbac64766b88599b0b2a7c3e279
   hr(),
   fluidRow(
     tabbox.report
@@ -108,7 +155,15 @@ dashboard.body <- dashboardBody(
   )
 )
 
+<<<<<<< HEAD
 #### PAGE } ####
+=======
+<<<<<<< HEAD
+#### PAGE } ####
+=======
+#### PAGE ####
+>>>>>>> a1ae3fff12fd4cd2671e5816485c05525c01e142
+>>>>>>> 3e13d758f0005cbac64766b88599b0b2a7c3e279
 
 dashboardPage(
   dashboard.header,
