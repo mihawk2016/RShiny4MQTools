@@ -50,7 +50,6 @@ file.uploader <- box(
     file.uploader.upload,
     file.uploader.clear,
     hr()
-    
   )
 )
 
@@ -68,18 +67,12 @@ tabbox.report <- tabBox(
   tabbox.report.tickets
 )
 
-<<<<<<< HEAD
 #### + BODY } ####
 
 dashboard.body <- dashboardBody(
   # Boxes need to be put in a row (or column)
   file.uploader,
   file.uploader,
-=======
-dashboard.body <- dashboardBody(
-  # Boxes need to be put in a row (or column)
-  upload,
->>>>>>> a1ae3fff12fd4cd2671e5816485c05525c01e142
   hr(),
   fluidRow(
     tabbox.report
@@ -115,7 +108,6 @@ dashboard.body <- dashboardBody(
   )
 )
 
-<<<<<<< HEAD
 #### PAGE } ####
 
 dashboardPage(
@@ -123,3 +115,6 @@ dashboardPage(
   dashboard.sidebar,
   dashboard.body
 )
+
+
+
