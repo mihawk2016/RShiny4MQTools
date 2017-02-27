@@ -28,8 +28,6 @@ output.report.html <- function(report, markdown) {
 output.report.html.render <- function(markdown, file.name, envir) {
   # ''' report output file '''
   # 2017-01-30: Version 1.0
-  # markdown <- ifelse(comment, './Markdowns/Output.Comment.Rmd', './Markdowns/Output.Rmd')
-  # file.name <- paste0(.output.report.name(infos), '.html')
   Sys.setlocale(locale = 'us')
   render(markdown, html_document(), output_file = file.name, quiet = T, envir = envir)
   Sys.setlocale(locale = 'Chinese')
