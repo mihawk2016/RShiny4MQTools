@@ -44,45 +44,48 @@ MQ_ANALYSTIC <- R6Class(
     output.report = function(report=private$report[[2]], markdown=private$MARKDOWNS[1]) {
       output.report(report, markdown, file.type='HTML')
     },
+    
+    #### PHASES ####
+    phase2 = function(report.phase1, index) {
+      reports.PHASE2(report.phase1, index,
+                     private$DEFAULT.CURRENCY, private$DEFAULT.LEVERAGE, private$DB.OPEN.FUN,
+                     private$MYSQL.SETTING, private$TIMEFRAME.TICKVALUE, private$SYMBOLS.SETTING,
+                     private$PARALLEL.THRESHOLD.GENERATE.TICKETS)
+    },
+    phase3 = function(report.phase2, set.init.money=NULL, include.middle=TRUE) {
+      reports.PHASE3(report.phase2,
+                     set.init.money, include.middle, private$DEFAULT.INIT.MONEY,
+                     private$DEFAULT.CURRENCY, private$DB.OPEN.FUN, private$TIMEFRAME.TICKVALUE,
+                     private$DB.OHLC.FUN, private$TIMEFRAME.REPORT, private$PARALLEL.THRESHOLD.DB.SYMBOLS,
+                     private$SYMBOLS.SETTING, private$PARALLEL.THRESHOLD.GENERATE.TICKETS)
+    },
+    
     #### GETTER & SETTER ####
-    get.report = function(member, index,
-                          default.currency=private$DEFAULT.CURRENCY,
-                          default.leverage=private$DEFAULT.LEVERAGE,
-                          get.open.fun=private$DB.OPEN.FUN,
-                          mysql.setting=private$MYSQL.SETTING,
-                          timeframe=private$TIMEFRAME.TICKVALUE,
-                          symbols.setting=private$SYMBOLS.SETTING,
-                          parallel=private$PARALLEL.THRESHOLD.GENERATE.TICKETS) {
+    get.report = function(member, index, set.init.money=NULL, include.middle=TRUE) {
       if (missing(index)) {
         index <- 1:length(private$report)
       }
       if (missing(member)) {
         return(private$report[index])
       }
-      if (all(member %in% CONTENT.PHASE1.INIT)) {
+      if (all(member %in% CONTENT.PHASE1)) {
         return(private$get.report.simple(member, index))
       }
-      if (any(member %in% CONTENT.PHASE2.TICKETS)) {
-        null.sub.index <- sapply(private$report[index], function(r) is.null(r$CURRENCY)) %>% which
+      if (any(member %in% c(CONTENT.PHASE2, CONTENT.PHASE3))) {
+        null.sub.index <- sapply(private$report[index], function(r) r$PHASE == 1) %>% which
         if (length(null.sub.index)) {
           null.index <- index[null.sub.index]
-          new.report <- generate.html.tickets2(private$report[null.index], null.index, default.currency, default.leverage,
-                                               get.open.fun, mysql.setting, timeframe, symbols.setting, parallel)
-          self$set.report(index = null.index, value = new.report)
+          self$set.report(index = null.index, value = self$phase2(private$report[null.index], null.index))
         }
       }
-      # if (any(member %in% c('TICKETS.EDITING'))) {
-      #   null.sub.index <- sapply(private$report[index], function(r) is.null(r$TICKETS.EDITING)) %>% which
-      #   if (length(null.sub.index)) {
-      #     
-      #   }
-      #   # tickets.editing <-
-      #   #   self$get.report('CURRENCY', index) %>%
-      #   #   generate.tickets.editing2 #%>%
-      #   # print(tickets.editing)
-      #   #   self$set.report(index = index, value = .)
-      #   # self$set.report(index = null.index, value = generate.tickets.editing2(tickets.editing))
-      # }
+      if (any(member %in% CONTENT.PHASE3)) {
+        null.sub.index <- sapply(private$report[index], function(r) r$PHASE == 2) %>% which
+        if (length(null.sub.index)) {
+          null.index <- index[null.sub.index]
+          self$set.report(index = null.index, value = self$phase3(private$report[null.index],
+                                                                  set.init.money, include.middle))
+        }
+      }
       return(private$get.report.simple(member, index))
     },
     set.report = function(member, index, value) {
@@ -125,8 +128,10 @@ MQ_ANALYSTIC <- R6Class(
     SYMBOLS.SETTING = NULL,
     PARALLEL.THRESHOLD.READ.FILES = 200,
     PARALLEL.THRESHOLD.GENERATE.TICKETS = 6,
+    PARALLEL.THRESHOLD.DB.SYMBOLS = 6,
     DEFAULT.LEVERAGE = 100,
     DEFAULT.CURRENCY = 'USD',
+    DEFAULT.INIT.MONEY = 10000,
     TIMEFRAME.TICKVALUE = 'M1',
     TIMEFRAME.REPORT = 'H1',
     MYSQL.SETTING =NULL,
@@ -135,12 +140,10 @@ MQ_ANALYSTIC <- R6Class(
     
     MARKDOWNS = c('./markdown/output.report.Rmd'),
     
-    
     selected.index = c(),
     mismatch = c(),
     report = list(),
     merged.report = NULL,
-    
     
     build.merged.report = function(index=private$selected.index,
                                    default.currency=private$DEFAULT.CURRENCY,
@@ -157,12 +160,14 @@ MQ_ANALYSTIC <- R6Class(
         INFOS <- self$get.report('INFOS', index) %>% rbindlist
         CURRENCY <- report.currency(INFOS, default.currency)
         LEVERAGE <- report.leverage(INFOS, default.leverage)
-        TICKETS.RAW <- self$get.report('TICKETS.RAW', index, default.currency, default.leverage, get.open.fun, mysql.setting,
-                                       timeframe, symbols.setting, parallel) %>% rbindlist
+        TICKETS.RAW <- self$get.report('TICKETS.RAW', index, default.currency, default.leverage,
+                                       get.open.fun, mysql.setting, timeframe, symbols.setting,
+                                       parallel) %>% rbindlist
         ITEM.SYMBOL.MAPPING <- item.symbol.mapping(TICKETS.RAW, symbols.setting[, SYMBOL])
         SUPPORTED.ITEM <- supported.items(ITEM.SYMBOL.MAPPING)
         UNSUPPORTED.ITEM <- unsupported.items(ITEM.SYMBOL.MAPPING)
         TICKETS.SUPPORTED <- tickets.supported(TICKETS.RAW, ITEM.SYMBOL.MAPPING) %>% rbindlist
+        PHASE <- 2
       })
     },
     
