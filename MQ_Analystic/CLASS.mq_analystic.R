@@ -41,7 +41,28 @@ MQ_ANALYSTIC <- R6Class(
     },
     
     
-    output.report = function(report=private$report[[2]], markdown=private$MARKDOWNS[1]) {
+    output.report = function( markdown=private$MARKDOWNS[1]) {
+      index <- self$get('selected.index')
+      if (!length(index)) {
+        return(NULL)
+      }
+      if (length(index) == 1) {
+        report <- self$get.report(index = index)[[1]]
+        if (report$PHASE == 1) {
+          report <- self$set.report(index = index, value = self$phase2(list(report), index))[[1]]
+        }
+        if (report$PHASE == 2) {
+          report <- self$set.report(index = index, value = self$phase3(list(report)))[[1]]
+        }
+      } else {
+        report <- self$get('merged.report')
+        if (is.null(report)) {
+          report <- self$set('merged.report', private$build.merged.report())
+        }
+        if (report$PHASE == 2) {
+          report <- self$set('merged.report', value = self$phase3(list(report)))[[1]]
+        }
+      }
       output.report(report, markdown, file.type='HTML')
     },
     
@@ -57,7 +78,8 @@ MQ_ANALYSTIC <- R6Class(
                      set.init.money, include.middle, private$DEFAULT.INIT.MONEY,
                      private$DEFAULT.CURRENCY, private$DB.OPEN.FUN, private$TIMEFRAME.TICKVALUE,
                      private$DB.OHLC.FUN, private$TIMEFRAME.REPORT, private$PARALLEL.THRESHOLD.DB.SYMBOLS,
-                     private$SYMBOLS.SETTING, private$PARALLEL.THRESHOLD.GENERATE.TICKETS)
+                     private$SYMBOLS.SETTING, private$PARALLEL.THRESHOLD.GENERATE.TICKETS,
+                     private$MYSQL.SETTING)
     },
     
     #### GETTER & SETTER ####

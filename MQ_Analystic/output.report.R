@@ -1,5 +1,6 @@
 library(htmlTable)
 library(rmarkdown)
+library(ggvis)
 
 #### @UPDATE IDEA@ ####
 ## 2017-02-17: 
@@ -19,7 +20,7 @@ output.report <- function(report, markdown, file.type='HTML') {
 output.report.html <- function(report, markdown) {
   windowsFonts(CON = windowsFont("Consolas"))
   with(report, {
-    output.INFOS <- output.report.html.infos(INFOS)
+    # output.INFOS <- output.report.html.infos(INFOS)
     
     output.report.html.render(markdown, output.file.name(INFOS, 'REPORT'), environment())
   })
@@ -48,4 +49,8 @@ output.report.html.infos <- function(infos) {
               rnames = F)
 } # FINISH
 
+#### + EQUITY ACCOUNT ####
+output.report.html.equity.account <- function(timeseries.account) {
+  
+}
 
