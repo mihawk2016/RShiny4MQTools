@@ -10,11 +10,16 @@ output:
 
 ***
 ```{r echo=F}
+A <- 1
 copy(INFOS) %>%
     extract(
       j = TIME := time.numeric.to.posixct(TIME)
     ) %>%
     htmlTable(css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;",
               rnames = F)
+```
+
+```{r echo=F}
+print(A)
 ```
 
