@@ -8,18 +8,33 @@ output:
     theme: null
 ---
 
+```{r}
+attach(REPORT)
+```
+
+
 ***
 ```{r echo=F}
-A <- 1
 copy(INFOS) %>%
     extract(
       j = TIME := time.numeric.to.posixct(TIME)
     ) %>%
     htmlTable(css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;",
               rnames = F)
+with(PERIOD, {
+  data.table(
+    START = int_start(NATURE.INTERVAL),
+    NATURAL.PERIOD = as.character(NATURE.PERIOD),
+    TRADE.DAYS = TRADE.DAYS,
+    END = int_end(NATURE.INTERVAL))
+}) %>%
+  htmlTable(css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;",
+              rnames = F)
 ```
 
 ```{r echo=F}
-print(A)
+ggvis(TIMESERIE.ACCOUNT[, TIME := time.numeric.to.posixct(TIME)], ~TIME, ~EQUITY) %>% layer_lines %>%
+  add_axis('x', title = 'EQUITY') %>% add_axis('y', title = '')
+
 ```
 
