@@ -15,6 +15,7 @@ files <- file.path('./_TEST/_FILES', dir('./_TEST/_FILES')) %>%
 TEST <- MQ_ANALYSTIC$new()
 TEST$add.files(files)
 time1 <- system.time({
-  TEST$output.report()
+  # TEST$output.report()
+  TEST
 })
 print(time1)
