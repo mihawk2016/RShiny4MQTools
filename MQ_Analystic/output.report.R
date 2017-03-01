@@ -1,6 +1,6 @@
 library(htmlTable)
 library(rmarkdown)
-library(ggvis)
+library(ggplot2)
 
 #### @UPDATE IDEA@ ####
 ## 2017-02-17: 

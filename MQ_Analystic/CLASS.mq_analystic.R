@@ -11,6 +11,9 @@
 
 library(RMitekeLab)
 library(R6)
+library(rmarkdown)
+library(ggplot2)
+library(grid)
 
 MQ_ANALYSTIC <- R6Class(
   classname = 'MetaQuote Analystic',
@@ -78,7 +81,7 @@ MQ_ANALYSTIC <- R6Class(
                      set.init.money, include.middle, private$DEFAULT.INIT.MONEY,
                      private$DEFAULT.CURRENCY, private$DB.OPEN.FUN, private$TIMEFRAME.TICKVALUE,
                      private$DB.OHLC.FUN, private$TIMEFRAME.REPORT, private$PARALLEL.THRESHOLD.DB.SYMBOLS,
-                     private$SYMBOLS.SETTING, private$PARALLEL.THRESHOLD.GENERATE.TICKETS,
+                     private$MARGIN.BASE, private$SYMBOLS.SETTING, private$PARALLEL.THRESHOLD.GENERATE.TICKETS,
                      private$MYSQL.SETTING)
     },
     
@@ -154,6 +157,7 @@ MQ_ANALYSTIC <- R6Class(
     DEFAULT.LEVERAGE = 100,
     DEFAULT.CURRENCY = 'USD',
     DEFAULT.INIT.MONEY = 10000,
+    MARGIN.BASE = 1500,
     TIMEFRAME.TICKVALUE = 'M1',
     TIMEFRAME.REPORT = 'H1',
     MYSQL.SETTING =NULL,

@@ -8,33 +8,73 @@ output:
     theme: null
 ---
 
-```{r}
-attach(REPORT)
-```
-
-
 ***
 ```{r echo=F}
+attach(REPORT)
 copy(INFOS) %>%
-    extract(
-      j = TIME := time.numeric.to.posixct(TIME)
-    ) %>%
-    htmlTable(css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;",
-              rnames = F)
+  extract(
+    j = TIME := time.numeric.to.posixct(TIME)
+  ) %>%
+  htmlTable(css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;", rnames = F)
+```
+
+```{r echo=F}
 with(PERIOD, {
   data.table(
     START = int_start(NATURE.INTERVAL),
     NATURAL.PERIOD = as.character(NATURE.PERIOD),
     TRADE.DAYS = TRADE.DAYS,
     END = int_end(NATURE.INTERVAL))
-}) %>%
-  htmlTable(css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;",
-              rnames = F)
+  }) %>%
+  htmlTable(css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;", rnames = F)
 ```
 
-```{r echo=F}
-ggvis(TIMESERIE.ACCOUNT[, TIME := time.numeric.to.posixct(TIME)], ~TIME, ~EQUITY) %>% layer_lines %>%
-  add_axis('x', title = 'EQUITY') %>% add_axis('y', title = '')
+```{r echo=F, fig.align='center', fig.width=10, message=FALSE, warning=FALSE}
+TIMESERIE.ACCOUNT %>%
+  extract(j = .(TIME, EQUITY, MARGIN.FREE, MARGIN.USED)) %>%
+  melt('TIME') %>% {
+    ggplot(.) +
+      geom_line(aes(x = TIME, y = value, color = variable)) +
+      facet_grid(variable ~ ., scales = 'free_y') +
+      xlab('EQUITY & MARGIN') +
+      ylab(NULL) +
+      theme(legend.position = 'none', axis.ticks.x = element_blank()) +
+      scale_y_continuous(labels = scales::dollar)
+  }
+```
 
+```{r echo=F, fig.align='center', fig.width=10, message=FALSE, warning=FALSE}
+x <- melt(SYMBOLS.PROFIT_VOLUME, c('TIME', 'SYMBOL'))
+print(x)
+ggplot(x) +
+  geom_line(aes(x = TIME, y = value, color = SYMBOL)) +
+      facet_grid(variable ~ ., scales = 'free_y')
+# SYMBOLS.PROFIT_VOLUME %>%
+#   melt(c('TIME', 'SYMBOL')) %>% {
+#     ggplot(.) +
+#       geom_line(aes(x = TIME, y = value, color = SYMBOL), data = .[value == 'BALANCE.DELTA']) +
+#       # geom_bar(stat='identity', aes(x = TIME, y = value, color = SYMBOL)) +
+#       facet_grid(variable ~ ., scales = 'free_y')
+#   }
+
+# SYMBOLS.PROFIT %>% {
+#   ggplot(.) +
+#     geom_line(aes(x = TIME, y = BALANCE.DELTA, color = SYMBOL)) +
+#     xlab(NULL) +
+#     ylab(NULL) +
+#     theme(legend.position = 'none', axis.ticks.x = element_blank()) +
+#     scale_y_continuous(labels = scales::dollar)
+# }
+  
+# TIMESERIE.SYMBOLS %>%
+#   extract(j = .(TIME = time.numeric.to.posixct(TIME), EQUITY = EQUITY, MARGIN.FREE = MARGIN.FREE, MARGIN.USED = MARGIN.USED)) %>%
+#   melt('TIME')
+# ggplot(timeserie.account) +
+#   geom_line(aes(x = TIME, y = value, color = variable)) +
+#   facet_grid(variable ~ ., scales = 'free_y') +
+#   xlab(NULL) +
+#   ylab(NULL) +
+#   theme(legend.position = 'none', axis.text.x = element_blank(), axis.ticks.x = element_blank()) +
+#   scale_y_continuous(labels = scales::dollar)
 ```
 

@@ -20,3 +20,6 @@ time1 <- system.time({
   # TEST
 })
 print(time1)
+
+REPORT <- TEST$get.report(index = 2)[[1]]
+save(REPORT, file = './_TEST/report.rdata')
