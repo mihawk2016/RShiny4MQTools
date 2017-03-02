@@ -15,7 +15,11 @@ copy(INFOS) %>%
   extract(
     j = TIME := time.numeric.to.posixct(TIME)
   ) %>%
-  htmlTable(css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;", rnames = F)
+  as.data.frame %>%
+  htmlTable(rnames = F,
+            css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;",
+            col.rgroup = c("none", "#F9FAF0"),
+            col.columns = c("none", "#F1F0FA"))
 ```
 
 ```{r echo=F}
@@ -65,6 +69,11 @@ mddp.calendar(TIMESERIE.ACCOUNT)%>%
 
 
 ```{r echo=F}
-
+TICKETS.EDITED[, c('TICKET', 'OTIME', 'TYPE', 'VOLUME', 'SYMBOL', 'OPRICE', 'SL', 'TP',
+                   'CTIME', 'CPRICE', 'COMMISSION', 'TAXES', 'SWAP', 'PROFIT', 'PERIOD', 'MFP', 'MFPP', 'MFL', 'MFLP')] %>%
+  htmlTable(rnames = F,
+            css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;",
+            col.rgroup = c('none', '#F9FAF0'),
+            col.columns = c("none", "#F1F0FA"))
 ```
 
