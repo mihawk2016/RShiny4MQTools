@@ -5,9 +5,11 @@ if ('package:RMitekeLab' %in% package.list) {
   detach('package:RMitekeLab', unload = TRUE)
 }
 library(RMitekeLab)
+library(ggplot2)
 source('./MQ_Analystic/CLASS.mq_analystic.R')
 source('./MQ_Analystic/output.report.R')
 # load('./_TEST/report.rdata')
+
 
 files <- file.path('./_TEST/_FILES', dir('./_TEST/_FILES')) %>%
   extract(1:10)

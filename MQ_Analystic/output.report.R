@@ -34,23 +34,74 @@ output.report.html.render <- function(markdown, file.name, envir) {
   Sys.setlocale(locale = 'Chinese')
 } # FINISH
 
+#### + OUTPUT EVALUATION ####
 
 
-
-#### + REPORT INFOS ####
-output.report.html.infos <- function(infos) {
-  # ''' infos for output '''
-  # 2016-08-11: Version 1.0
-  copy(infos) %>%
-    extract(
-      j = TIME := time.numeric.to.posixct(TIME)
-    ) %>%
-    htmlTable(css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;",
-              rnames = F)
+#### OTHERS ####
+yield.calendar <- function(dt, percent=TRUE, digits=2) {
+  setkey(dt, TIME)
+  tb <- dt[, .(TIME, RETURN, YM = format(TIME, '%Y%m'))]
+  years <- year(tb[1, TIME]):year(tb[.N, TIME])
+  calendar <- matrix(data = NA, nrow = length(years), ncol = 13,
+                     dimnames = list(years, c(strftime(seq.Date(as.Date("2000-01-01"), length.out = 12, by = "months"), format = "%b"), 'TOTAL')))
+  tb[, {
+    year <- substr(YM[1], 1, 4)
+    month <- as.numeric(substr(YM[1], 5, 6))
+    calendar[year, month] <<- cum.return(RETURN) %>%
+      extract(length(.))
+  }, by = YM]
+  tb[, {
+    year <- substr(YM[1], 1, 4)
+    calendar[year, 13] <<- cum.return(RETURN) %>%
+      extract(length(.))
+  }, by = substr(YM, 1,4)]
+  calendar %>%
+    as.data.table(keep.rownames=TRUE) %>%
+    setnames(1, 'YIELD(%)')
 } # FINISH
 
-#### + EQUITY ACCOUNT ####
-output.report.html.equity.account <- function(timeseries.account) {
-  
-}
+mddp.calendar <- function(dt, percent=TRUE, digits=2) {
+  setkey(dt, TIME)
+  tb <- dt[, .(TIME, RETURN, YM = format(TIME, '%Y%m'))]
+  years <- year(tb[1, TIME]):year(tb[.N, TIME])
+  calendar <- matrix(data = NA, nrow = length(years), ncol = 13,
+                     dimnames = list(years, c(strftime(seq.Date(as.Date("2000-01-01"), length.out = 12, by = "months"), format = "%b"), 'TOTAL')))
+  tb[, {
+    year <- substr(YM[1], 1, 4)
+    month <- as.numeric(substr(YM[1], 5, 6))
+    RETURN[is.na(RETURN)] <- 0
+    return.serie <- cumprod(RETURN + 1)
+    calendar[year, month] <<- return.serie %>%
+      maxdrawdown %>% {
+        1 - return.serie[.$TO] / return.serie[.$FROM]
+      } %>% {
+        if (percent) {
+          (.) %>% multiply_by(100)
+        } else {
+          .
+        }
+      } %>%
+      round(digits)
+  }, by = YM]
+  tb[, {
+    year <- substr(YM[1], 1, 4)
+    RETURN[is.na(RETURN)] <- 0
+    return.serie <- cumprod(RETURN + 1)
+    calendar[year, 13] <<- return.serie %>%
+      maxdrawdown %>% {
+        1 - return.serie[.$TO] / return.serie[.$FROM]
+      } %>% {
+        if (percent) {
+          (.) %>% multiply_by(100)
+        } else {
+          .
+        }
+      } %>%
+      round(digits)
+  }, by = substr(YM, 1,4)]
+  calendar %>%
+    as.data.table(keep.rownames=TRUE) %>%
+    setnames(1, 'MaxDD(%)')
+} # FINISH
+
 

@@ -10,7 +10,7 @@ output:
 
 ***
 ```{r echo=F}
-attach(REPORT)
+# attach(REPORT)
 copy(INFOS) %>%
   extract(
     j = TIME := time.numeric.to.posixct(TIME)
@@ -54,5 +54,17 @@ melt(SYMBOLS.PROFIT_VOLUME, c('TIME', 'SYMBOL')) %>% {
   theme(legend.position = 'bottom', legend.direction = 'horizontal', legend.key.size = unit(8, 'pt'),
         legend.title = element_blank(), panel.background = element_blank())
 }
+```
+
+```{r echo=F}
+yield.calendar(TIMESERIE.ACCOUNT)%>%
+  htmlTable(css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;", rnames = F)
+mddp.calendar(TIMESERIE.ACCOUNT)%>%
+  htmlTable(css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;", rnames = F)
+```
+
+
+```{r echo=F}
+
 ```
 
