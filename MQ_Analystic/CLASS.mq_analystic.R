@@ -44,7 +44,7 @@ MQ_ANALYSTIC <- R6Class(
     },
     
     
-    output.report = function( markdown=private$MARKDOWNS[1]) {
+    output.report = function(markdown=private$MARKDOWNS[1]) {
       index <- self$get('selected.index')
       if (!length(index)) {
         return(NULL)

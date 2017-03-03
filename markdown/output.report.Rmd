@@ -1,5 +1,5 @@
 ---
-title: "MetaQuot Analystic"
+title: "MetaQuote Analystic"
 output:
   html_document:
     fig_caption: yes
@@ -7,6 +7,16 @@ output:
     keep_md: yes
     theme: null
 ---
+
+<style>
+.main-container {
+  width: 960px;
+  max-width:1600px;
+}
+body, td {
+  font-size: 10px;
+}
+</style>
 
 ***
 ```{r echo=F}
@@ -18,22 +28,12 @@ copy(INFOS) %>%
   as.data.frame %>%
   htmlTable(rnames = F,
             css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;",
+            css.cell = rep('width: 150px;', 8),
             col.rgroup = c("none", "#F9FAF0"),
             col.columns = c("none", "#F1F0FA"))
 ```
 
-```{r echo=F}
-with(PERIOD, {
-  data.table(
-    START = int_start(NATURE.INTERVAL),
-    NATURAL.PERIOD = as.character(NATURE.PERIOD),
-    TRADE.DAYS = TRADE.DAYS,
-    END = int_end(NATURE.INTERVAL))
-  }) %>%
-  htmlTable(css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;", rnames = F)
-```
-
-```{r echo=F, fig.align='center', fig.width=10, message=FALSE, warning=FALSE}
+```{r echo=F, fig.align='center', fig.width=13, message=FALSE, warning=FALSE}
 TIMESERIE.ACCOUNT %>%
   extract(j = .(TIME, EQUITY, MARGIN.FREE, MARGIN.USED)) %>%
   melt('TIME') %>% {
@@ -47,33 +47,159 @@ TIMESERIE.ACCOUNT %>%
   }
 ```
 
-```{r echo=F, fig.align='center', fig.width=10, message=FALSE, warning=FALSE}
+```{r echo=F}
+with(PERIOD, {
+  data.table(
+    START = int_start(NATURE.INTERVAL),
+    NATURAL.PERIOD = as.character(NATURE.PERIOD),
+    TRADE.DAYS = TRADE.DAYS,
+    END = int_end(NATURE.INTERVAL))
+  }) %>%
+  htmlTable(rnames = F,
+            caption = 'TRADE PERIOD',
+            css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;",
+            css.cell = rep('width: 300px;', 4),
+            col.rgroup = c("none", "#F9FAF0"),
+            col.columns = c("none", "#F1F0FA"))
+```
+
+```{r echo=F, fig.align='center', fig.width=13, message=FALSE, warning=FALSE}
 lables <- c(BALANCE.DELTA = 'PROFIT', NET.VOLUME = 'VOLUME')
 melt(SYMBOLS.PROFIT_VOLUME, c('TIME', 'SYMBOL')) %>% {
   ggplot(.) +
   geom_line(aes(x = TIME, y = value, color = SYMBOL)) +
   facet_grid(variable ~ ., scales = 'free_y', labeller = labeller(variable = lables)) +
-  xlab(NULL) +
+  xlab('PROFIT & VOLUME') +
   ylab(NULL) +
   theme(legend.position = 'bottom', legend.direction = 'horizontal', legend.key.size = unit(8, 'pt'),
         legend.title = element_blank(), panel.background = element_blank())
 }
 ```
-
+  
+## Calendar
+***
 ```{r echo=F}
 yield.calendar(TIMESERIE.ACCOUNT)%>%
-  htmlTable(css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;", rnames = F)
+  htmlTable(rnames = F,
+            caption = 'YIELD CALENDAR',
+            css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;",
+            css.cell = rep('width: 85px;', 14),
+            col.rgroup = c("none", "#F9FAF0"),
+            col.columns = c("none", "#F1F0FA"))
 mddp.calendar(TIMESERIE.ACCOUNT)%>%
-  htmlTable(css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;", rnames = F)
+  htmlTable(rnames = F,
+            caption = 'MAX-DRAWDOWN CALENDAR',
+            css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;",
+            css.cell = rep('width: 85px;', 14),
+            col.rgroup = c("none", "#F9FAF0"),
+            col.columns = c("none", "#F1F0FA"))
 ```
 
 
 ```{r echo=F}
-TICKETS.EDITED[, c('TICKET', 'OTIME', 'TYPE', 'VOLUME', 'SYMBOL', 'OPRICE', 'SL', 'TP',
-                   'CTIME', 'CPRICE', 'COMMISSION', 'TAXES', 'SWAP', 'PROFIT', 'PERIOD', 'MFP', 'MFPP', 'MFL', 'MFLP')] %>%
+# net.profit <-
+# con.monthly.loss <-
+# trades.per.day
+# mdd.portfolio
+# win.percent
+# threshold <- c(0, 2, 1, 30, 50)
+# result.char <- c('FAIL', 'OK')
+# data.table(
+#   THEME = c('Net Profit',
+#             'Monthly Yield',
+#             'Trades per Day',
+#             'Max Drawdown Percent',
+#             'Win Percent'),
+#   DESCRIPTION = c(sprintf(' greater than %.2f $', threshold[1]),
+#                   sprintf(' no more than %i Loss in a row', threshold[2]),
+#                   sprintf(' greater than %.2f trades per day', threshold[3]),
+#                   sprintf(' less than %.2f %%', threshold[4]),
+#                   sprintf(' greater than %.2f %%', threshold[5])),
+#   RESULT = c(sprintf('%.2f $', net.profit),
+#              sprintf('max %i', con.monthly.loss),
+#              sprintf('%.2f', trades.per.day),
+#              sprintf('%.2f %%', mdd.portfolio),
+#              sprintf('%.2f %%', win.percent)),
+#   EVALUATION = result.char[c(net.profit > threshold[1],
+#                              con.monthly.loss <= threshold[2],
+#                              trades.per.day > threshold[3],
+#                              mdd.portfolio < threshold[4],
+#                              win.percent > threshold[5]) + 1]
+# ) %>%
+#   htmlTable(rnames = F,
+#             caption = 'EVALUATION',
+#             css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;",
+#             css.cell = rep('width: 300px;', 4),
+#             col.rgroup = c("none", "#F9FAF0"),
+#             col.columns = c("none", "#F1F0FA"))
+```
+  
+## Portfolio Report
+***
+```{r Portfolio Report, echo=F}
+STATISTIC.ACCOUNT.PL %>%
+  setnames(c('', 'N', 'SUM', 'MEAN', 'MAX', 'SUM', 'MEAN', 'MAX', 'SUM', 'MEAN', 'MAX', 'MIN', 'N.MAX', 'N.MEAN', 'MAX', 'MEAN')) %>%
+  htmlTable(rnames = F,
+            caption = 'PROFIT vs LOSS',
+            css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;",
+            css.cell = rep('width: 75px;', 16),
+            cgroup = c('', '', 'MONEY', 'PIP', 'VOLUME', 'CONTINUOUS'),
+            n.cgroup = c(1, 1, 3, 3, 4, 4),
+            col.rgroup = c("none", "#F9FAF0"),
+            col.columns = c("none", "#F1F0FA"))
+
+
+```
+
+
+
+```{r Symbol Report, echo=F}
+if (length(unique(TICKETS.EDITED[, SYMBOL])) > 1) {
+  symbols <- unique(STATISTIC.SYMBOLS.PL[, SYMBOL])
+  tagList(
+    tags$h2('Symbol Report'),
+    tags$hr(),
+    STATISTIC.SYMBOLS.PL %>%
+      extract(j = !c(1)) %>%
+      setnames(c('', 'N', 'SUM', 'MEAN', 'MAX', 'SUM', 'MEAN', 'MAX', 'SUM', 'MEAN', 'MAX', 'MIN', 'N.MAX', 'N.MEAN', 'MAX', 'MEAN')) %>%
+      htmlTable(rnames = F,
+                caption = 'PROFIT vs LOSS',
+                css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;",
+                css.cell = rep('width: 75px;', 16),
+                rgroup = symbols,
+                n.rgroup = rep(2, length(symbols)),
+                cgroup = c('', '', 'MONEY', 'PIP', 'VOLUME', 'CONTINUOUS'),
+                n.cgroup = c(1, 1, 3, 3, 4, 4),
+                col.rgroup = c("none", "#F9FAF0"),
+                col.columns = c("none", "#F1F0FA"))
+      
+  )
+}
+```
+
+
+
+
+
+  
+## Tickets Report
+***
+```{r Tickets Report, echo=F}
+copy(TICKETS.EDITED) %>%
+  extract(
+    j = c('PERIOD', 'MFPP', 'MFLP') := list(time.num.to.period.char(PERIOD), time.num.to.period.char(MFPP), time.num.to.period.char(MFLP))
+  ) %>%
+  extract(
+    j = c('TICKET', 'ITEM', 'TYPE', 'VOLUME', 'OTIME', 'OPRICE', 'CTIME', 'CPRICE', 'SL', 'TP',
+          'NPROFIT', 'PIP', 'MFP', 'MFPP', 'MFL', 'MFLP', 'PERIOD', 'EXIT')
+  ) %>%
+  setnames(c('Ticket', 'Item', 'Type', 'Vol', 'Time', 'Price', 'Time', 'Price',' SL', 'TP',
+             'NetProf', 'Pip', 'Prof', 'Prof.P', 'LOSS', 'Loss.P', 'Period', 'Exit')) %>%
   htmlTable(rnames = F,
             css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;",
-            col.rgroup = c('none', '#F9FAF0'),
+            cgroup = c('', 'REQUEST', 'OPEN', 'CLOSE', 'STOPS', 'RESULT', 'MAX FLOATING', ''),
+            n.cgroup = c(1, 3, 2, 2, 2, 2, 4, 2),
+            col.rgroup = c("none", "#F9FAF0"),
             col.columns = c("none", "#F1F0FA"))
 ```
 
