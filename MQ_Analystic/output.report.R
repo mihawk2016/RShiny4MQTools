@@ -102,4 +102,37 @@ mddp.calendar <- function(dt, percent=TRUE, digits=2) {
     setnames(1, 'MaxDD(%)')
 } # FINISH
 
+sharpe.ratio <- function(x) {
+  # ''' calculate sharpe ratio '''
+  # 2016-08-19: Done
+  mean(x) / sd(x)
+} # 2016-08-19: Done
 
+score.yearly.return <- function(yearly.return) {
+  if (yearly.return <= 0) {
+    return(0)
+  }
+  if (yearly.return >= 40) {
+    return(100)
+  }
+  round(yearly.return * 2.5, 0)
+}
+score.mddp <- function(mddp) {
+  if (mddp >= 30) {
+    return(0)
+  }
+  round(100 - yearly.return * 10 / 3, 0)
+}
+level <- function(score) {
+  if (score >= 80) {
+    'A'
+  } else if (score >= 60) {
+    'B'
+  } else if (score >= 40) {
+    'C'
+  } else if (score >= 20) {
+    'D'
+  } else {
+    'E'
+  }
+}

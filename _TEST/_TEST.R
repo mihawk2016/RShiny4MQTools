@@ -7,6 +7,7 @@ if ('package:RMitekeLab' %in% package.list) {
 library(RMitekeLab)
 library(ggplot2)
 library(knitr)
+library(htmltools)
 source('./MQ_Analystic/CLASS.mq_analystic.R')
 source('./MQ_Analystic/output.report.R')
 
