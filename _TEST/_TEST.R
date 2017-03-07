@@ -1,4 +1,4 @@
-rm(list = ls())
+# rm(list = ls())
 
 package.list <- search()
 if ('package:RMitekeLab' %in% package.list) {
@@ -8,6 +8,8 @@ library(RMitekeLab)
 library(ggplot2)
 library(knitr)
 library(htmltools)
+library(fPortfolio)
+library(fMultivar)
 source('./MQ_Analystic/CLASS.mq_analystic.R')
 source('./MQ_Analystic/output.report.R')
 
@@ -17,13 +19,15 @@ files <- file.path('./_TEST/_FILES', dir('./_TEST/_FILES')) %>%
 
 TEST <- MQ_ANALYSTIC$new()
 TEST$add.files(files)
-TEST$set('selected.index', 6)
+# TEST$set('selected.index', 6)
 time1 <- system.time({
-  TEST$output.report()
+  # TEST$get.report(member='INFOS')
+  # TEST$output.report(index = 10)
   # TEST
+  TEST$output.tickets(index = 2)
 })
 print(time1)
 
-REPORT <- TEST$get.report(index = 6)[[1]]
-save(REPORT, file = './_TEST/report.rdata')
-load('./_TEST/report.rdata')
+# REPORT <- TEST$get.report(index = 6)[[1]]
+# save(REPORT, file = './_TEST/report.rdata')
+# load('./_TEST/report.rdata')

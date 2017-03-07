@@ -31,7 +31,9 @@ MQ_ANALYSTIC <- R6Class(
         sapply(files.data, is.character) %>% which
       if (length(mismatch.index)) {
         self$append('mismatch', unlist(files.data[mismatch.index]))
-        self$append('report', files.data[-mismatch.index])
+        if (length(report <- files.data[-mismatch.index])) {
+          self$append('report', report)
+        }
       } else {
         self$append('report', files.data)
       }
@@ -43,9 +45,12 @@ MQ_ANALYSTIC <- R6Class(
       private$merged.report <- NULL
     },
     
-    
-    output.report = function(markdown=private$MARKDOWNS[1]) {
-      index <- self$get('selected.index')
+    output.tickets = function(index, tickets='TICKETS.EDITING', groups=c('MONEY', 'CLOSED', 'OPEN'), columns=c(), file.name) {
+      if (missing(index)) {
+        index <- self$get('selected.index')
+      } else {
+        index <- self$set('selected.index', index)
+      }
       if (!length(index)) {
         return(NULL)
       }
@@ -59,14 +64,49 @@ MQ_ANALYSTIC <- R6Class(
         }
       } else {
         report <- self$get('merged.report')
-        if (is.null(report)) {
+        if (is.null(report) || !identical(report$INDEX, index)) {
           report <- self$set('merged.report', private$build.merged.report())
         }
         if (report$PHASE == 2) {
-          report <- self$set('merged.report', value = self$phase3(list(report)))[[1]]
+          report <- self$set('merged.report', value = self$phase3(list(report))[[1]])
         }
       }
-      output.report(report, markdown, file.type='HTML')
+      if (missing(file.name)) {
+        file.name <- output.file.name(report$INFOS, type='TICKETS') %>% paste0('.csv')
+      }
+      output.tickets(tickets=report[[tickets]], groups, columns, file.name)
+    },
+    
+    output.report = function(index, file.name, markdown=private$MARKDOWNS[1]) {
+      if (missing(index)) {
+        index <- self$get('selected.index')
+      } else {
+        index <- self$set('selected.index', index)
+      }
+      if (!length(index)) {
+        return(NULL)
+      }
+      if (length(index) == 1) {
+        report <- self$get.report(index = index)[[1]]
+        if (report$PHASE == 1) {
+          report <- self$set.report(index = index, value = self$phase2(list(report), index))[[1]]
+        }
+        if (report$PHASE == 2) {
+          report <- self$set.report(index = index, value = self$phase3(list(report)))[[1]]
+        }
+      } else {
+        report <- self$get('merged.report')
+        if (is.null(report) || !identical(report$INDEX, index)) {
+          report <- self$set('merged.report', private$build.merged.report())
+        }
+        if (report$PHASE == 2) {
+          report <- self$set('merged.report', value = self$phase3(list(report))[[1]])
+        }
+      }
+      if (missing(file.name)) {
+        file.name <- output.file.name(report$INFOS, type='REPORT') %>% paste0('.html')
+      }
+      output.report(report, file.name, markdown, file.type='HTML')
     },
     
     #### PHASES ####
@@ -88,7 +128,11 @@ MQ_ANALYSTIC <- R6Class(
     #### GETTER & SETTER ####
     get.report = function(member, index, set.init.money=NULL, include.middle=TRUE) {
       if (missing(index)) {
-        index <- 1:length(private$report)
+        if (length(private$report)) {
+          index <- 1:length(private$report)
+        } else {
+          return(private$report)
+        }
       }
       if (missing(member)) {
         return(private$report[index])
@@ -151,9 +195,9 @@ MQ_ANALYSTIC <- R6Class(
   ),
   private = list(
     SYMBOLS.SETTING = NULL,
-    PARALLEL.THRESHOLD.READ.FILES = 200,
-    PARALLEL.THRESHOLD.GENERATE.TICKETS = 6,
-    PARALLEL.THRESHOLD.DB.SYMBOLS = 6,
+    PARALLEL.THRESHOLD.READ.FILES = FALSE, #200,
+    PARALLEL.THRESHOLD.GENERATE.TICKETS = FALSE, #6,
+    PARALLEL.THRESHOLD.DB.SYMBOLS = FALSE, #6,
     DEFAULT.LEVERAGE = 100,
     DEFAULT.CURRENCY = 'USD',
     DEFAULT.INIT.MONEY = 10000,
@@ -164,7 +208,7 @@ MQ_ANALYSTIC <- R6Class(
     DB.OPEN.FUN = NULL,
     DB.OHLC.FUN = NULL,
     
-    MARKDOWNS = c('./markdown/output.report.Rmd'),
+    MARKDOWNS = c('../markdown/output.report.Rmd'),
     
     selected.index = c(),
     mismatch = c(),
@@ -183,16 +227,16 @@ MQ_ANALYSTIC <- R6Class(
         return(NULL)
       }
       within(list(), {
-        INFOS <- self$get.report('INFOS', index) %>% rbindlist
+        INFOS <- self$get.report('INFOS', index) %>% rbindlist(use.names=TRUE, fill=TRUE)
         CURRENCY <- report.currency(INFOS, default.currency)
         LEVERAGE <- report.leverage(INFOS, default.leverage)
-        TICKETS.RAW <- self$get.report('TICKETS.RAW', index, default.currency, default.leverage,
-                                       get.open.fun, mysql.setting, timeframe, symbols.setting,
-                                       parallel) %>% rbindlist
+        TICKETS.RAW <- self$get.report('TICKETS.RAW', index) %>% rbindlist(use.names=TRUE, fill=TRUE)
         ITEM.SYMBOL.MAPPING <- item.symbol.mapping(TICKETS.RAW, symbols.setting[, SYMBOL])
         SUPPORTED.ITEM <- supported.items(ITEM.SYMBOL.MAPPING)
         UNSUPPORTED.ITEM <- unsupported.items(ITEM.SYMBOL.MAPPING)
-        TICKETS.SUPPORTED <- tickets.supported(TICKETS.RAW, ITEM.SYMBOL.MAPPING) %>% rbindlist
+        TICKETS.SUPPORTED <- tickets.supported(TICKETS.RAW, ITEM.SYMBOL.MAPPING)
+        TICKETS.EDITING <- tickets.editing(TICKETS.SUPPORTED)
+        INDEX <- index
         PHASE <- 2
       })
     },

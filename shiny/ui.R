@@ -77,59 +77,59 @@ input <- box(
   input.list
 )
 
-
-#### ++ BODY >> ANALYSIS >> ####
-
-#### +++ BODY >> ANALYSIS >> ACCOUNT ####
-analystic.account <- tabPanel(title = 'ACCOUNT')
-
-#### +++ BODY >> ANALYSIS >> SYMBOL ####
-analystic.symbol <- tabPanel(title = 'SYMBOL')
-
-#### +++ BODY >> ANALYSIS >> TICKETS ####
-analystic.tickets.table <- DT::dataTableOutput(
-  outputId = 'analystic.tickets.table',
-  width = '100%'
-)
-
-analystic.tickets <- tabPanel(
-  title = 'TICKETS',
-  analystic.tickets.table
-)
-
-#### +++ BODY >> ANALYSIS << ####
-analystic <- box(
-  collapsible = T,
-  status = 'warning',
-  solidHeader = TRUE,
-  title = 'ANALYSTIC',
-  width = 12,
-  tabBox(
-    width = 12,
-    analystic.account,
-    analystic.symbol,
-    analystic.tickets
-  ))
+# 
+# #### ++ BODY >> ANALYSIS >> ####
+# 
+# #### +++ BODY >> ANALYSIS >> ACCOUNT ####
+# analystic.account <- tabPanel(title = 'ACCOUNT')
+# 
+# #### +++ BODY >> ANALYSIS >> SYMBOL ####
+# analystic.symbol <- tabPanel(title = 'SYMBOL')
+# 
+# #### +++ BODY >> ANALYSIS >> TICKETS ####
+# analystic.tickets.table <- DT::dataTableOutput(
+#   outputId = 'analystic.tickets.table',
+#   width = '100%'
+# )
+# 
+# analystic.tickets <- tabPanel(
+#   title = 'TICKETS',
+#   analystic.tickets.table
+# )
+# 
+# #### +++ BODY >> ANALYSIS << ####
+# analystic <- box(
+#   collapsible = T,
+#   status = 'warning',
+#   solidHeader = TRUE,
+#   title = 'ANALYSTIC',
+#   width = 12,
+#   tabBox(
+#     width = 12,
+#     analystic.account,
+#     analystic.symbol,
+#     analystic.tickets
+#   ))
 
 #### ++ BODY >> OUTPUT >> ####
 
 #### +++ BODY >> OUTPUT >> CSV ####
 output.csv <- downloadButton(
   outputId = 'output.csv.button',
-  label = 'CSV'
+  label = 'TICKETS-CSV'
 )
 
 output.csv.groups <- checkboxGroupInput(
   inputId = 'output.csv.groups',
   label = 'Choose Ticket Types: ',
   choices = list(
-    'MONEY' = 'Money',
-    'CLOSED' = 'Closed',
-    'OPEN' = 'Open',
-    'PENDING' = 'Pending',
-    'WORKING' = 'Working'
+    'MONEY' = 'MONEY',
+    'CLOSED' = 'CLOSED',
+    'OPEN' = 'OPEN',
+    'PENDING' = 'PENDING',
+    'WORKING' = 'WORKING'
   ),
-  selected = c('Money', 'Closed', 'Open'),
+  selected = c('MONEY', 'CLOSED', 'OPEN'),
   inline = TRUE
 )
 
@@ -138,8 +138,8 @@ output.csv.columns <- checkboxGroupInput(
   label = 'Choose Extra Columns: ',
   choices = list(
     'COMMENT' = 'COMMENT',
-    'GROUP' = 'GROUP'#,
-    # 'FILE NAME' = 'FILE'
+    'GROUP' = 'GROUP',
+    'FILE NAME' = 'FILE'
   ),
   selected =NULL,
   inline = TRUE
@@ -147,7 +147,7 @@ output.csv.columns <- checkboxGroupInput(
 
 #### +++ BODY >> OUTPUT >> REPORT ####
 output.report <- downloadButton(
-  outputId = 'output.report',
+  outputId = 'output.report.button',
   label = 'REPORT'
 )
 #### ++ BODY >> OUTPUT >> ####
@@ -181,7 +181,7 @@ output <- box(
 dashboard.body <- dashboardBody(
   useShinyjs(),
   input,
-  analystic,
+  # analystic,
   output
 )
 

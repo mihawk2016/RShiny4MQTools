@@ -19,6 +19,7 @@ body, td {
 </style>
 
 ***
+## Overview
 ```{r infos, echo=F}
 # attach(REPORT)
 copy(INFOS) %>%
@@ -72,23 +73,29 @@ melt(SYMBOLS.PROFIT_VOLUME, c('TIME', 'SYMBOL')) %>% {
   xlab('PROFIT & VOLUME') +
   ylab(NULL) +
   theme(legend.position = 'bottom', legend.direction = 'horizontal', legend.key.size = unit(10, 'pt'),
-        legend.title = element_blank(), panel.background = element_blank())
+        legend.title = element_blank())
 }
 ```
   
 ## Calendar
-***
 ```{r yield & mddp calendar, echo=F}
-yield.calendar(TIMESERIE.ACCOUNT)%>%
+yield.calendar(TIMESERIE.ACCOUNT) %>%
   htmlTable(rnames = F,
             caption = 'YIELD CALENDAR',
             css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;",
             css.cell = rep('width: 85px;', 14),
             col.rgroup = c("none", "#F9FAF0"),
             col.columns = c("none", "#F1F0FA"))
-mddp.calendar(TIMESERIE.ACCOUNT)%>%
+mddp.calendar(TIMESERIE.ACCOUNT) %>%
   htmlTable(rnames = F,
-            caption = 'MAX-DRAWDOWN CALENDAR',
+            caption = 'MAX-DRAWDOWN CALENDAR (to EQUITY)',
+            css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;",
+            css.cell = rep('width: 85px;', 14),
+            col.rgroup = c("none", "#F9FAF0"),
+            col.columns = c("none", "#F1F0FA"))
+balance.mddp.calendar(TICKETS.EDITED, TICKETS.MONEY) %>%
+  htmlTable(rnames = F,
+            caption = 'MAX-DRAWDOWN CALENDAR (to BALANCE)',
             css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;",
             css.cell = rep('width: 85px;', 14),
             col.rgroup = c("none", "#F9FAF0"),
@@ -96,17 +103,16 @@ mddp.calendar(TIMESERIE.ACCOUNT)%>%
 ```
   
 ## Evalution
-***
 ```{r evaluation, echo=F}
 net.profit <- STATISTIC.ACCOUNT.PL[PL == 'TOTAL', SUM]
 con.monthly.loss <-
   TIMESERIE.ACCOUNT %>%
   setkey(TIME) %>%
   extract(
-    j = .(TIME, BALANCE.DELTA, YM = format(TIME, '%Y%m'))
+    j = .(TIME, BALANCE.DELTA = c(0, BALANCE.DELTA) %>% diff, YM = format(TIME, '%Y%m'))
   ) %>%
   extract(
-    j = .(M.PROFIT = sum(diff(BALANCE.DELTA))),
+    j = .(M.PROFIT = sum(BALANCE.DELTA)),
     by = YM
   ) %>%
   extract(j = M.PROFIT) %>% cal.continuous %>% {
@@ -147,7 +153,6 @@ data.table(
                              win.percent > threshold[5]) + 1]
 ) %>%
   htmlTable(rnames = F,
-            caption = 'EVALUATION',
             css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;",
             css.cell = rep('width: 300px;', 4),
             col.rgroup = c("none", "#F9FAF0"),
@@ -155,13 +160,32 @@ data.table(
 ```
   
 ## Scores
-***
 ```{r scores, echo=F}
-
+yearly.yield <- STATISTIC.ACCOUNT.OTHERS[ITEM == 'YIELD', YEARLY]
+yield.score <- score.yearly.return(yearly.yield)
+mddp <- STATISTIC.ACCOUNT.OTHERS[MDD == 'MDDP', MDD.VALUE]
+mddp.score <- score.mddp(mddp)
+score <- mean(c(yield.score, mddp.score)) %>% round(0)
+data.table(
+  YEARLY.YIELD = sprintf('%s     >>>', yearly.yield),
+  YIELD.SCORE = sprintf('(%s)     >>>', yield.score %>% round(0)),
+  SCORE.LEVEL = sprintf('%s (%s)', level(score), score),
+  MDDP.SCORE = sprintf('<<<     (%s)', mddp.score %>% round(0)),
+  MDDP.YIELD = sprintf('<<<     %s', mddp)
+) %>%
+  htmlTable(rnames = F,
+            css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;",
+            css.cell = rep('width: 192px;', 5),
+            cgroup = c('YEARLY.RETURN', 'LEVEL', 'MAX.DRAWDOWN'),
+            n.cgroup = c(2, 1, 2),
+            col.rgroup = c("none", "#F9FAF0"),
+            col.columns = c(rep("none", 2),
+                            "#F1F0FA",
+                            rep("none", 2))
+            )
 ```
   
 ## Portfolio Report
-***
 ```{r Portfolio Report, echo=F}
 copy(STATISTIC.ACCOUNT.PL) %>%
   setnames(c('P/L', 'N', 'SUM($)', 'MEAN($)', 'MAX($)', 'SUM', 'MEAN', 'MAX', 'SUM', 'MEAN', 'MAX', 'MIN', 'N.MAX', 'N.MEAN', 'MAX($)', 'MEAN($)')) %>%
@@ -200,15 +224,12 @@ copy(STATISTIC.ACCOUNT.PL) %>%
 
 ```
 
-
-
-```{r Symbol Report, echo=F}
-symbols <- unique(STATISTIC.SYMBOLS.PL[, SYMBOL])
+```{r Symbol Report, echo=F, fig.align='center', fig.width=10, message=FALSE, warning=FALSE}
+symbols <- unique(TICKETS.EDITED[, SYMBOL])
 n.symbols <- length(symbols)
 if (n.symbols > 1) {
   tagList(
     tags$h2('Symbol Report'),
-    tags$hr(),
     copy(STATISTIC.SYMBOLS.PL) %>%
       extract(j = !c(1)) %>%
       setnames(c('P/L', 'N', 'SUM($)', 'MEAN($)', 'MAX($)', 'SUM', 'MEAN', 'MAX', 'SUM', 'MEAN', 'MAX', 'MIN', 'N.MAX', 'N.MEAN', 'MAX($)', 'MEAN($)')) %>%
@@ -246,23 +267,20 @@ if (n.symbols > 1) {
                 col.columns = c(rep("none", 6),
                                 rep("#F1F0FA", 4),
                                 rep("none", 2),
-                                rep("#F1F0FA", 3))
-      )
+                                rep("#F1F0FA", 3))),
+    SYMBOLS.RETURN %>%
+      extract(j = !'TIME') %>%
+      myAssetsCorImagePlot(abbreviate = 10)
   )
 }
 ```
 
-
-
-
-
-  
 ## Tickets Report
-***
 ```{r Tickets Report, echo=F}
 copy(TICKETS.EDITED) %>%
+  setkey(OTIME) %>%
   extract(
-    j = c('PERIOD', 'MFPP', 'MFLP') := list(time.num.to.period.char(PERIOD), time.num.to.period.char(MFPP), time.num.to.period.char(MFLP))
+    j = c('VOLUME', 'PERIOD', 'MFPP', 'MFLP') := list(round(VOLUME, 2), time.num.to.period.char(PERIOD), time.num.to.period.char(MFPP), time.num.to.period.char(MFLP))
   ) %>%
   extract(
     j = c('TICKET', 'ITEM', 'TYPE', 'VOLUME', 'OTIME', 'OPRICE', 'CTIME', 'CPRICE', 'SL', 'TP',

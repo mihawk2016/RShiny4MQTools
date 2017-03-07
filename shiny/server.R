@@ -1,25 +1,38 @@
+
+package.list <- search()
+if ('package:RMitekeLab' %in% package.list) {
+  detach('package:RMitekeLab', unload = TRUE)
+}
 library(shiny)
 library(RMitekeLab)
-options(shiny.maxRequestSize=15*1024^2)
 
-sapply(file.path('./class', dir('./class')), source)
-analystic <- MQAnalystic$new()
+library(ggplot2)
+library(knitr)
+library(htmltools)
+library(fPortfolio)
+library(fMultivar)
+source('../MQ_Analystic/CLASS.mq_analystic.R')
+source('../MQ_Analystic/output.report.R')
+options(shiny.maxRequestSize=15*1024^2)
+analystic <- MQ_ANALYSTIC$new()
 
 #### SHINY-SERVER >> ####
 
 #### + SHINY-SERVER >> INPUT ####
 shiny.input <- function(input, output) {
   analystic$add.files(input$input.upload)
-  un.files <- analystic$get.unsupported.files()
-  if (!is.null(un.files)) {
+  mismatch.files <- analystic$get('mismatch')
+  if (length(mismatch.files)) {
     output$input.unsupport.table <- renderDataTable({
-      datatable(as.matrix(analystic$get.unsupported.files()), selection = 'none', colnames = NULL)
+      datatable(as.matrix(mismatch.files), selection = 'none', colnames = NULL)
     })
   }
-  all.infos <- subset(analystic$get.all.Reports.infos(), select = -FilePath)
-  if (!is.null(all.infos)) {
+  reports <- analystic$get.report()
+  if (length(reports)) {
     output$input.support.table <- renderDataTable({
-      datatable(all.infos, selection = 'multiple')
+      datatable(analystic$get.report(member = 'INFOS') %>%
+                  do.call(rbind, .)
+                %>% extract(j = TIME := time.numeric.to.posixct(TIME) %>% as.character), selection = 'multiple')
     })
   }
 }
@@ -53,40 +66,59 @@ shinyServer(function(input, output) {
   
   output$output.csv.button <- downloadHandler(
     filename = function() {
-      paste0('Tickets', '_xx', '.csv')
+      input$input.support.table_rows_selected %>%
+        analystic$get.report('INFOS', .) %>%
+        rbindlist(use.names=TRUE, fill=TRUE) %>%
+        output.file.name('TICKETS') %>%
+        paste0('.csv')
     },
     content = function(file) {
       analystic$output.tickets(
         index = input$input.support.table_rows_selected,
         groups = input$output.csv.groups,
         columns = input$output.csv.columns,
-        filename,
         file = file
       ) ## ToDo: filename ####
     }
   )
   
-  output$analystic.tickets.table <- renderDataTable({
-    ## ToDo ####
-    old.selected <- analystic$get.selected.index()
-    selected <- selected.reports()
-    if (!identical(old.selected, selected)) {
-      if (is.null(selected)) {
-        render <- NULL
-      } else {
-        analystic$set.selected.index(selected)
-        report <- analystic$set.analyzing.report()
-        supported.Report <- analystic$init.others(report)
-        tickets <- supported.Report$get.tickets.member('supported')
-        tickets <- format(tickets, nsmall = 2)
-        tickets[is.na(tickets)] <- ''
-        render <- datatable(tickets, selection = 'single')
-      }
-    } else {
-      render <- datatable(as.matrix(c(1,2,3)), selection = 'single', colnames = NULL)
+  output$output.report.button <- downloadHandler(
+    filename = function() {
+      input$input.support.table_rows_selected %>%
+        analystic$get.report('INFOS', .) %>%
+        rbindlist(use.names=TRUE, fill=TRUE) %>%
+        output.file.name('TICKETS') %>%
+        paste0('.html')
+    },
+    content = function(file) {
+      analystic$output.report(
+        index = input$input.support.table_rows_selected,
+        file = file
+      ) ## ToDo: filename ####
     }
-    render
-  })
+  )
+  
+  # output$analystic.tickets.table <- renderDataTable({
+  #   ## ToDo ####
+  #   old.selected <- analystic$get.selected.index()
+  #   selected <- selected.reports()
+  #   if (!identical(old.selected, selected)) {
+  #     if (is.null(selected)) {
+  #       render <- NULL
+  #     } else {
+  #       analystic$set.selected.index(selected)
+  #       report <- analystic$set.analyzing.report()
+  #       supported.Report <- analystic$init.others(report)
+  #       tickets <- supported.Report$get.tickets.member('supported')
+  #       tickets <- format(tickets, nsmall = 2)
+  #       tickets[is.na(tickets)] <- ''
+  #       render <- datatable(tickets, selection = 'single')
+  #     }
+  #   } else {
+  #     render <- datatable(as.matrix(c(1,2,3)), selection = 'single', colnames = NULL)
+  #   }
+  #   render
+  # })
   
   
 })
