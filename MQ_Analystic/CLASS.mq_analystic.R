@@ -59,21 +59,24 @@ MQ_ANALYSTIC <- R6Class(
         if (report$PHASE == 1) {
           report <- self$set.report(index = index, value = self$phase2(list(report), index))[[1]]
         }
-        if (report$PHASE == 2) {
-          report <- self$set.report(index = index, value = self$phase3(list(report)))[[1]]
-        }
+        # if (report$PHASE == 2) {
+        #   report <- self$set.report(index = index, value = self$phase3(list(report)))[[1]]
+        # }
       } else {
         report <- self$get('merged.report')
         if (is.null(report) || !identical(report$INDEX, index)) {
           report <- self$set('merged.report', private$build.merged.report())
         }
-        if (report$PHASE == 2) {
-          report <- self$set('merged.report', value = self$phase3(list(report))[[1]])
-        }
+        # if (report$PHASE == 2) {
+        #   report <- self$set('merged.report', value = self$phase3(list(report))[[1]])
+        # }
       }
       if (missing(file.name)) {
         file.name <- output.file.name(report$INFOS, type='TICKETS') %>% paste0('.csv')
       }
+      # if (grepl('MT4M', report$INFOS[, TYPE])) {
+      #   tickets <- 'TICKETS.RAW'
+      # }
       output.tickets(tickets=report[[tickets]], groups, columns, file.name)
     },
     

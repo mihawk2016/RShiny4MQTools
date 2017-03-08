@@ -16,7 +16,6 @@ output.report <- function(report, file, markdown, file.type='HTML') {
     'HTML' = output.report.html(report, file, markdown)
   )
 }
-# =paste0(output.file.name(INFOS, 'REPORT'), '.html')
 
 output.report.html <- function(report, file.name, markdown) {
   windowsFonts(CON = windowsFont("Consolas"))

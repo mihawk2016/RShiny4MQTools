@@ -6,7 +6,44 @@ library(DT)
 #### PAGE >> ####
 
 #### + HEADER ####
-dashboard.header <- dashboardHeader(title = 'MetaQuote Tools')
+dashboard.header <- dashboardHeader(
+  title = 'MetaQuote Tools',
+  dropdownMenu(
+    type = 'notifications',
+    notificationItem(
+      text = 'file-type: .htm/.html',
+      icon = icon('thumbs-up')
+    ),
+    notificationItem(
+      text = 'file-size <= 20M',
+      icon = icon('thumbs-up')
+    )
+  ),
+  dropdownMenu(
+    type = 'tasks',
+    badgeStatus = NULL,
+    taskItem(
+      text = 'optimized output report interface',
+      value = '100',
+      color = 'green'
+    ),
+    taskItem(
+      text = 'all code rewrite for speed',
+      value = '100',
+      color = 'green'
+    ),
+    taskItem(
+      text = 'Web',
+      value = '60',
+      color = 'yellow'
+    ),
+    taskItem(
+      text = 'Hypothesis-Edit support',
+      value = '10',
+      color = 'red'
+    )
+  )
+)
 
 #### + SIDEBAR ####
 dashboard.sidebar <- dashboardSidebar(

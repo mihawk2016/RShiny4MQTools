@@ -24,7 +24,7 @@ time1 <- system.time({
   # TEST$get.report(member='INFOS')
   # TEST$output.report(index = 10)
   # TEST
-  TEST$output.tickets(index = 2)
+  TEST$output.tickets(index = 1)
 })
 print(time1)
 
