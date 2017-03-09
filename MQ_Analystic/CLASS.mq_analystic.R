@@ -81,6 +81,7 @@ MQ_ANALYSTIC <- R6Class(
     },
     
     output.report = function(index, file.name, markdown=private$MARKDOWNS[1]) {
+
       if (missing(index)) {
         index <- self$get('selected.index')
       } else {
@@ -109,7 +110,9 @@ MQ_ANALYSTIC <- R6Class(
       if (missing(file.name)) {
         file.name <- output.file.name(report$INFOS, type='REPORT') %>% paste0('.html')
       }
-      output.report(report, file.name, markdown, file.type='HTML')
+      tempReport <- file.path(tempdir(), basename(markdown))
+      file.copy(markdown, tempReport, overwrite = TRUE)
+      output.report(report, file.name, tempReport, file.type='HTML')
     },
     
     #### PHASES ####
@@ -211,7 +214,7 @@ MQ_ANALYSTIC <- R6Class(
     DB.OPEN.FUN = NULL,
     DB.OHLC.FUN = NULL,
     
-    MARKDOWNS = c('../markdown/output.report.Rmd'),
+    MARKDOWNS = c('../markdown/output.report.Rmd', '../markdown/output.report2.Rmd'),
     
     selected.index = c(),
     mismatch = c(),
