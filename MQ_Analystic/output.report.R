@@ -18,7 +18,7 @@ output.report <- function(report, file, markdown, file.type='HTML') {
 }
 
 output.report.html <- function(report, file.name, markdown) {
-  windowsFonts(CON = windowsFont("Consolas"))
+  # windowsFonts(CON = windowsFont("Consolas"))
   with(report, {
     output.report.html.render(markdown, file.name, environment())
   })

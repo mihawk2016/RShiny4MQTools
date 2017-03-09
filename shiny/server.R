@@ -55,7 +55,7 @@ shiny.clear <- function(input, output) {
 # }
 
 #### SHINY-SERVER << ####
-shinyServer(function(input, output) {
+shinyServer(function(input, output, session) {
   selected.reports <- reactive({
     input$input.support.table_rows_selected
   })

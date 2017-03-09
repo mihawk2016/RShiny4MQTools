@@ -94,22 +94,24 @@ MQ_ANALYSTIC <- R6Class(
         if (report$PHASE == 1) {
           report <- self$set.report(index = index, value = self$phase2(list(report), index))[[1]]
         }
-        if (report$PHASE == 2) {
-          report <- self$set.report(index = index, value = self$phase3(list(report)))[[1]]
-        }
+        # if (report$PHASE == 2) {
+        #   report <- self$set.report(index = index, value = self$phase3(list(report)))[[1]]
+        # }
       } else {
         report <- self$get('merged.report')
         if (is.null(report) || !identical(report$INDEX, index)) {
           report <- self$set('merged.report', private$build.merged.report())
         }
-        if (report$PHASE == 2) {
-          report <- self$set('merged.report', value = self$phase3(list(report))[[1]])
-        }
+        # if (report$PHASE == 2) {
+        #   report <- self$set('merged.report', value = self$phase3(list(report))[[1]])
+        # }
       }
       if (missing(file.name)) {
         file.name <- output.file.name(report$INFOS, type='REPORT') %>% paste0('.html')
       }
-      output.report(report, file.name, markdown, file.type='HTML')
+      tempReport <- file.path(tempdir(), basename(markdown))
+      file.copy(markdown, tempReport, overwrite = TRUE)
+      output.report(report, file.name, tempReport, file.type='HTML')
     },
     
     #### PHASES ####
@@ -211,7 +213,7 @@ MQ_ANALYSTIC <- R6Class(
     DB.OPEN.FUN = NULL,
     DB.OHLC.FUN = NULL,
     
-    MARKDOWNS = c('../markdown/output.report.Rmd'),
+    MARKDOWNS = c('./markdown/output.report.Rmd'),
     
     selected.index = c(),
     mismatch = c(),

@@ -8,23 +8,23 @@ library(RMitekeLab)
 library(ggplot2)
 library(knitr)
 library(htmltools)
-library(fPortfolio)
+# library(fPortfolio)
 library(fMultivar)
 source('./MQ_Analystic/CLASS.mq_analystic.R')
 source('./MQ_Analystic/output.report.R')
 
 
 files <- file.path('./_TEST/_FILES', dir('./_TEST/_FILES')) %>%
-  extract(1:10)
+  extract(1:12)
 
 TEST <- MQ_ANALYSTIC$new()
 TEST$add.files(files)
 # TEST$set('selected.index', 6)
 time1 <- system.time({
   # TEST$get.report(member='INFOS')
-  # TEST$output.report(index = 10)
+  TEST$output.report(index = 2)
   # TEST
-  TEST$output.tickets(index = 1)
+  # TEST$output.tickets(index = 1)
 })
 print(time1)
 
