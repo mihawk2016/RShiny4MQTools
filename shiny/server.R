@@ -1,15 +1,15 @@
 
-package.list <- search()
-if ('package:RMitekeLab' %in% package.list) {
-  detach('package:RMitekeLab', unload = TRUE)
-}
+# package.list <- search()
+# if ('package:RMitekeLab' %in% package.list) {
+#   detach('package:RMitekeLab', unload = TRUE)
+# }
 library(shiny)
 library(RMitekeLab)
 
 library(ggplot2)
 library(knitr)
 library(htmltools)
-library(fPortfolio)
+# library(fPortfolio)
 library(fMultivar)
 source('../MQ_Analystic/CLASS.mq_analystic.R')
 source('../MQ_Analystic/output.report.R')
