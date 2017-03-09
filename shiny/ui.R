@@ -7,11 +7,11 @@ library(DT)
 
 #### + HEADER ####
 dashboard.header <- dashboardHeader(
-  title = 'MetaQuote Tools',
+  title = 'Miteke Lab',
   dropdownMenu(
     type = 'notifications',
     notificationItem(
-      text = 'file-type: .htm/.html',
+      text = 'support file-type: .htm/.html',
       icon = icon('thumbs-up')
     ),
     notificationItem(
@@ -49,7 +49,8 @@ dashboard.header <- dashboardHeader(
 dashboard.sidebar <- dashboardSidebar(
   # disable = T,
   sidebarMenu(
-    menuItem('Analystic', tabName = 'Analystic', icon = icon('institution'))
+    menuItem('MetaQuote Analystic', tabName = 'Analystic', icon = icon('institution'),
+             badgeLabel = 'V 0.1', badgeColor = 'yellow')
   )
 )
 
