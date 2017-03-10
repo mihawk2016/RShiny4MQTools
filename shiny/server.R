@@ -56,7 +56,9 @@ shiny.clear <- function(input, output, analystic) {
 
 #### SHINY-SERVER << ####
 shinyServer(function(input, output, session) {
+
   analystic <- MQ_ANALYSTIC$new()
+
   selected.reports <- reactive({
     input$input.support.table_rows_selected
   })
