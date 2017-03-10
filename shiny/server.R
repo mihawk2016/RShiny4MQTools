@@ -14,12 +14,12 @@ library(fMultivar)
 source('../MQ_Analystic/CLASS.mq_analystic.R')
 source('../MQ_Analystic/output.report.R')
 options(shiny.maxRequestSize=15*1024^2)
-analystic <- MQ_ANALYSTIC$new()
+
 
 #### SHINY-SERVER >> ####
 
 #### + SHINY-SERVER >> INPUT ####
-shiny.input <- function(input, output) {
+shiny.input <- function(input, output, analystic) {
   analystic$add.files(input$input.upload)
   mismatch.files <- analystic$get('mismatch')
   if (length(mismatch.files)) {
@@ -38,7 +38,7 @@ shiny.input <- function(input, output) {
 }
 
 #### + SHINY-SERVER >> CLEAR ####
-shiny.clear <- function(input, output) {
+shiny.clear <- function(input, output, analystic) {
   analystic$clear.files()
   output$input.unsupport.table <- renderDataTable({
     NULL
@@ -56,12 +56,13 @@ shiny.clear <- function(input, output) {
 
 #### SHINY-SERVER << ####
 shinyServer(function(input, output, session) {
+  analystic <- MQ_ANALYSTIC$new()
   selected.reports <- reactive({
     input$input.support.table_rows_selected
   })
   
-  observeEvent(input$input.upload, shiny.input(input, output))
-  observeEvent(input$input.clear, shiny.clear(input, output))
+  observeEvent(input$input.upload, shiny.input(input, output, analystic))
+  observeEvent(input$input.clear, shiny.clear(input, output, analystic))
   
   
   output$output.csv.button <- downloadHandler(
