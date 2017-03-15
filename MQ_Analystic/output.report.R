@@ -33,7 +33,7 @@ output.report.html.render <- function(markdown, file.name, envir) {
     render(markdown, html_document(), output_file = file.name, quiet = T, envir = envir)
     Sys.setlocale(locale = 'Chinese')
   } else if (os == 'Linux') {
-    Sys.setlocale(locale = 'us_US.UTF-8')
+    Sys.setlocale(locale = 'en_US.UTF-8')
     render(markdown, html_document(), output_file = file.name, quiet = T, envir = envir)
     Sys.setlocale(locale = 'zh_CN.UTF-8')
   } else {
