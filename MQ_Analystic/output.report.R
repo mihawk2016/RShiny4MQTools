@@ -27,9 +27,18 @@ output.report.html <- function(report, file.name, markdown) {
 output.report.html.render <- function(markdown, file.name, envir) {
   # ''' report output file '''
   # 2017-01-30: Version 1.0
-  Sys.setlocale(locale = 'us')
-  render(markdown, html_document(), output_file = file.name, quiet = T, envir = envir)
-  Sys.setlocale(locale = 'Chinese')
+  os <- Sys.info()['sysname']
+  if (os == 'Windows') {
+    Sys.setlocale(locale = 'us')
+    render(markdown, html_document(), output_file = file.name, quiet = T, envir = envir)
+    Sys.setlocale(locale = 'Chinese')
+  } else if (os == 'Linux') {
+    Sys.setlocale(locale = 'us_US.UTF-8')
+    render(markdown, html_document(), output_file = file.name, quiet = T, envir = envir)
+    Sys.setlocale(locale = 'zh_CN.UTF-8')
+  } else {
+    NULL
+  }
 } # FINISH
 
 #### + OUTPUT EVALUATION ####
