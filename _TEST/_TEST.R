@@ -1,4 +1,4 @@
-# rm(list = ls())
+rm(list = ls())
 
 package.list <- search()
 if ('package:RMitekeLab' %in% package.list) {
@@ -23,7 +23,7 @@ TEST$add.files(files)
 time1 <- system.time({
   # TEST$get.report(member='INFOS')
 
-  TEST$output.report(index = 2)
+  TEST$output.report(index = 5)
   # TEST
   # TEST$output.tickets(index = 1)
 })

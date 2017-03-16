@@ -113,7 +113,7 @@ mddp.calendar <- function(dt, percent=TRUE, digits=2) {
 balance.mddp.calendar <- function(tickets.edited, tickets.money, percent=TRUE, digits=2) {
   tb <-
     tickets.edited %>%
-    rbind(copy(tickets.money) %>% extract(j = c('NPROFIT', 'CTIME') := list(PROFIT, time.numeric.to.posixct(OTIME))),
+    rbind(copy(tickets.money) %>% extract(j = c('NPROFIT', 'CTIME', 'OTIME') := list(PROFIT, time.numeric.to.posixct(OTIME), time.numeric.to.posixct(OTIME))),
           use.names=TRUE, fill=TRUE) %>%
     setkey(CTIME) %>%
     extract(

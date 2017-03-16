@@ -49,7 +49,7 @@ dashboard.header <- dashboardHeader(
 dashboard.sidebar <- dashboardSidebar(
   # disable = T,
   sidebarMenu(
-    menuItem('MetaQuote Analystic', tabName = 'Analystic', icon = icon('institution'),
+    menuItem('MetaQuote Analytic', tabName = 'Analystic', icon = icon('institution'),
              badgeLabel = 'V 0.1', badgeColor = 'yellow')
   )
 )
@@ -159,7 +159,7 @@ output.csv <- downloadButton(
 
 output.csv.groups <- checkboxGroupInput(
   inputId = 'output.csv.groups',
-  label = 'Choose Ticket Types: ',
+  label = 'Ticket Types: ',
   choices = list(
     'MONEY' = 'MONEY',
     'CLOSED' = 'CLOSED',
@@ -173,7 +173,7 @@ output.csv.groups <- checkboxGroupInput(
 
 output.csv.columns <- checkboxGroupInput(
   inputId = 'output.csv.columns',
-  label = 'Choose Extra Columns: ',
+  label = 'Extra Columns: ',
   choices = list(
     'COMMENT' = 'COMMENT',
     'GROUP' = 'GROUP',

@@ -188,7 +188,7 @@ data.table(
 ## Portfolio Report
 ```{r Portfolio Report, echo=F}
 copy(STATISTIC.ACCOUNT.PL) %>%
-  setnames(c('P/L', 'N', 'SUM($)', 'MEAN($)', 'MAX($)', 'SUM', 'MEAN', 'MAX', 'SUM', 'MEAN', 'MAX', 'MIN', 'N.MAX', 'N.MEAN', 'MAX($)', 'MEAN($)')) %>%
+  setnames(c('P/L', 'N', 'SUM', 'MEAN', 'MAX', 'SUM', 'MEAN', 'MAX', 'SUM', 'MEAN', 'MAX', 'MIN', 'N.MAX', 'N.MEAN', 'MAX', 'MEAN')) %>%
   extract(
     j = N := {
       win.percent <- N[c(TRUE, FALSE, FALSE)] / N[c(FALSE, FALSE, TRUE)] * 100
@@ -284,7 +284,8 @@ copy(TICKETS.EDITED) %>%
   ) %>%
   extract(
     j = c('TICKET', 'ITEM', 'TYPE', 'VOLUME', 'OTIME', 'OPRICE', 'CTIME', 'CPRICE', 'SL', 'TP',
-          'NPROFIT', 'PIP', 'MFP', 'MFPP', 'MFL', 'MFLP', 'PERIOD', 'EXIT')
+          'NPROFIT', 'PIP', 'MFP', 'MFPP', 'MFL', 'MFLP', 'PERIOD', 'EXIT'),
+    with = FALSE
   ) %>%
   setnames(c('Ticket', 'Item', 'Type', 'Vol', 'Time', 'Price', 'Time', 'Price',' SL', 'TP',
              'NetProf', 'Pip', 'Prof', 'Prof.P', 'LOSS', 'Loss.P', 'Period', 'Exit')) %>%
