@@ -141,7 +141,7 @@ data.table(
                   sprintf(' greater than %.2f trades per day', threshold[3]),
                   sprintf(' less than %.2f %%', threshold[4]),
                   sprintf(' greater than %.2f %%', threshold[5])),
-  RESULT = c(sprintf('%.2f $', net.profit),
+  RESULT = c(sprintf('%.2f', net.profit),
              sprintf('max %i', con.monthly.loss),
              sprintf('%.2f', trades.per.day),
              sprintf('%.2f %%', mdd.portfolio),
@@ -167,11 +167,11 @@ mddp <- STATISTIC.ACCOUNT.OTHERS[MDD == 'MDDP', MDD.VALUE]
 mddp.score <- score.mddp(mddp)
 score <- mean(c(yield.score, mddp.score)) %>% round(0)
 data.table(
-  YEARLY.YIELD = sprintf('%s     >>>', yearly.yield),
-  YIELD.SCORE = sprintf('(%s)     >>>', yield.score %>% round(0)),
+  YEARLY.YIELD = sprintf('%s', yearly.yield),
+  YIELD.SCORE = sprintf('(%s)', yield.score %>% round(0)),
   SCORE.LEVEL = sprintf('%s (%s)', level(score), score),
-  MDDP.SCORE = sprintf('<<<     (%s)', mddp.score %>% round(0)),
-  MDDP.YIELD = sprintf('<<<     %s', mddp)
+  MDDP.SCORE = sprintf('(%s)', mddp.score %>% round(0)),
+  MDDP.YIELD = sprintf('%s', mddp)
 ) %>%
   htmlTable(rnames = F,
             css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;",
@@ -232,7 +232,7 @@ if (n.symbols > 1) {
     tags$h2('Symbol Report'),
     copy(STATISTIC.SYMBOLS.PL) %>%
       extract(j = !c(1), with = FALSE) %>%
-      setnames(c('P/L', 'N', 'SUM($)', 'MEAN($)', 'MAX($)', 'SUM', 'MEAN', 'MAX', 'SUM', 'MEAN', 'MAX', 'MIN', 'N.MAX', 'N.MEAN', 'MAX($)', 'MEAN($)')) %>%
+      setnames(c('PL', 'N', 'SUM', 'MEAN', 'MAX', 'SUM', 'MEAN', 'MAX', 'SUM', 'MEAN', 'MAX', 'MIN', 'N.MAX', 'N.MEAN', 'MAX', 'MEAN')) %>%
       extract(
         j = N := {
         win.percent <- N[c(TRUE, FALSE, FALSE)] / N[c(FALSE, FALSE, TRUE)] * 100
@@ -249,28 +249,28 @@ if (n.symbols > 1) {
                 cgroup = c('', '', 'MONEY', 'PIP', 'VOLUME', 'CONTINUOUS'),
                 n.cgroup = c(1, 1, 3, 3, 4, 4),
                 col.rgroup = c("none", "#F9FAF0"),
-                col.columns = c("none", "#F1F0FA")),
-    copy(STATISTIC.SYMBOLS.OTHERS) %>%
-      extract(j = !c(1), with = FALSE) %>%
-      extract(
-        j = MDD.PERIOD := time.num.to.period.char(MDD.PERIOD)
-      ) %>%
-      htmlTable(rnames = F,
-                caption = 'OTHERS',
-                css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;",
-                rgroup = symbols,
-                n.rgroup = rep(3, n.symbols),
-                css.cell = rep('width: 64px;', 15),
-                cgroup = c('PROF.YIELD.RETURN', 'EXIT', 'SUMMARY', 'MAX.DRAWDOWN'),
-                n.cgroup = c(6, 4, 2, 3),
-                col.rgroup = c("none", "#F9FAF0"),
-                col.columns = c(rep("none", 6),
-                                rep("#F1F0FA", 4),
-                                rep("none", 2),
-                                rep("#F1F0FA", 3))),
-    SYMBOLS.RETURN %>%
-      extract(j = !c('TIME'), with = FALSE) %>%
-      myAssetsCorImagePlot(abbreviate = 10)
+                col.columns = c("none", "#F1F0FA"))#,
+    # copy(STATISTIC.SYMBOLS.OTHERS) %>%
+    #   extract(j = !c(1), with = FALSE) %>%
+    #   extract(
+    #     j = MDD.PERIOD := time.num.to.period.char(MDD.PERIOD)
+    #   ) %>%
+    #   htmlTable(rnames = F,
+    #             caption = 'OTHERS',
+    #             css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;",
+    #             rgroup = symbols,
+    #             n.rgroup = rep(3, n.symbols),
+    #             css.cell = rep('width: 64px;', 15),
+    #             cgroup = c('PROF.YIELD.RETURN', 'EXIT', 'SUMMARY', 'MAX.DRAWDOWN'),
+    #             n.cgroup = c(6, 4, 2, 3),
+    #             col.rgroup = c("none", "#F9FAF0"),
+    #             col.columns = c(rep("none", 6),
+    #                             rep("#F1F0FA", 4),
+    #                             rep("none", 2),
+    #                             rep("#F1F0FA", 3))),
+    # SYMBOLS.RETURN %>%
+    #   extract(j = !c('TIME'), with = FALSE) %>%
+    #   myAssetsCorImagePlot(abbreviate = 10)
   )
 }
 ```

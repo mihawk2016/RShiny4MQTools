@@ -23,7 +23,7 @@ TEST$add.files(files)
 time1 <- system.time({
   # TEST$get.report(member='INFOS')
 
-  TEST$output.report(index = 8)
+  TEST$output.report(index = 8, './test.html')
   # TEST
   # TEST$output.tickets(index = 1)
 })

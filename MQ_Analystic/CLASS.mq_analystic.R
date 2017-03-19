@@ -215,7 +215,7 @@ MQ_ANALYSTIC <- R6Class(
     DB.OHLC.FUN = NULL,
     
 
-    MARKDOWNS = c('./markdown/output.report.Rmd'),
+    MARKDOWNS = c('../markdown/output.report.Rmd'),
 
     
     selected.index = c(),
