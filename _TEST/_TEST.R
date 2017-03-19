@@ -15,7 +15,7 @@ source('./MQ_Analystic/output.report.R')
 
 
 files <- file.path('./_TEST/_FILES', dir('./_TEST/_FILES')) %>%
-  extract(1:12)
+  extract(1:13)
 
 TEST <- MQ_ANALYSTIC$new()
 TEST$add.files(files)
@@ -23,7 +23,7 @@ TEST$add.files(files)
 time1 <- system.time({
   # TEST$get.report(member='INFOS')
 
-  TEST$output.report(index = 5)
+  TEST$output.report(index = 8)
   # TEST
   # TEST$output.tickets(index = 1)
 })

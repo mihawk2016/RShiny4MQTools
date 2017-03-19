@@ -1,8 +1,8 @@
 
-# package.list <- search()
-# if ('package:RMitekeLab' %in% package.list) {
-#   detach('package:RMitekeLab', unload = TRUE)
-# }
+package.list <- search()
+if ('package:RMitekeLab' %in% package.list) {
+  detach('package:RMitekeLab', unload = TRUE)
+}
 library(shiny)
 library(RMitekeLab)
 

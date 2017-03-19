@@ -231,7 +231,7 @@ if (n.symbols > 1) {
   tagList(
     tags$h2('Symbol Report'),
     copy(STATISTIC.SYMBOLS.PL) %>%
-      extract(j = !c(1)) %>%
+      extract(j = !c(1), with = FALSE) %>%
       setnames(c('P/L', 'N', 'SUM($)', 'MEAN($)', 'MAX($)', 'SUM', 'MEAN', 'MAX', 'SUM', 'MEAN', 'MAX', 'MIN', 'N.MAX', 'N.MEAN', 'MAX($)', 'MEAN($)')) %>%
       extract(
         j = N := {
@@ -251,7 +251,7 @@ if (n.symbols > 1) {
                 col.rgroup = c("none", "#F9FAF0"),
                 col.columns = c("none", "#F1F0FA")),
     copy(STATISTIC.SYMBOLS.OTHERS) %>%
-      extract(j = !c(1)) %>%
+      extract(j = !c(1), with = FALSE) %>%
       extract(
         j = MDD.PERIOD := time.num.to.period.char(MDD.PERIOD)
       ) %>%
@@ -269,7 +269,7 @@ if (n.symbols > 1) {
                                 rep("none", 2),
                                 rep("#F1F0FA", 3))),
     SYMBOLS.RETURN %>%
-      extract(j = !'TIME') %>%
+      extract(j = !c('TIME'), with = FALSE) %>%
       myAssetsCorImagePlot(abbreviate = 10)
   )
 }
