@@ -221,15 +221,20 @@ copy(STATISTIC.ACCOUNT.PL) %>%
                               rep("none", 2),
                               rep("#F1F0FA", 3))
               )
-
 ```
 
-```{r Symbol Report, echo=F, fig.align='center', fig.width=10, message=FALSE, warning=FALSE}
+```{r Symbol Report title, echo=F, fig.align='center', fig.width=10, message=FALSE, warning=FALSE}
 symbols <- unique(TICKETS.EDITED[, SYMBOL])
 n.symbols <- length(symbols)
 if (n.symbols > 1) {
-  tagList(
-    tags$h2('Symbol Report'),
+  tags$h2('Symbol Report')
+}
+```
+
+```{r Symbol Report plTable, echo=F, fig.align='center', fig.width=10, message=FALSE, warning=FALSE}
+symbols <- unique(TICKETS.EDITED[, SYMBOL])
+n.symbols <- length(symbols)
+if (n.symbols > 1) {
     copy(STATISTIC.SYMBOLS.PL) %>%
       extract(j = !c(1), with = FALSE) %>%
       setnames(c('PL', 'N', 'SUM', 'MEAN', 'MAX', 'SUM', 'MEAN', 'MAX', 'SUM', 'MEAN', 'MAX', 'MIN', 'N.MAX', 'N.MEAN', 'MAX', 'MEAN')) %>%
@@ -237,7 +242,7 @@ if (n.symbols > 1) {
         j = N := {
         win.percent <- N[c(TRUE, FALSE, FALSE)] / N[c(FALSE, FALSE, TRUE)] * 100
         char.n <- as.character(N)
-        char.n[c(TRUE, FALSE, FALSE)] <- sprintf('%s (%.2f%%)', char.n[c(TRUE, FALSE, FALSE)], win.percent)
+        char.n[c(TRUE, FALSE, FALSE)] <- sprintf('%s (%.2f)', char.n[c(TRUE, FALSE, FALSE)], win.percent)
         char.n
       }) %>%
       htmlTable(rnames = F,
@@ -249,31 +254,96 @@ if (n.symbols > 1) {
                 cgroup = c('', '', 'MONEY', 'PIP', 'VOLUME', 'CONTINUOUS'),
                 n.cgroup = c(1, 1, 3, 3, 4, 4),
                 col.rgroup = c("none", "#F9FAF0"),
-                col.columns = c("none", "#F1F0FA"))#,
-    # copy(STATISTIC.SYMBOLS.OTHERS) %>%
-    #   extract(j = !c(1), with = FALSE) %>%
-    #   extract(
-    #     j = MDD.PERIOD := time.num.to.period.char(MDD.PERIOD)
-    #   ) %>%
-    #   htmlTable(rnames = F,
-    #             caption = 'OTHERS',
-    #             css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;",
-    #             rgroup = symbols,
-    #             n.rgroup = rep(3, n.symbols),
-    #             css.cell = rep('width: 64px;', 15),
-    #             cgroup = c('PROF.YIELD.RETURN', 'EXIT', 'SUMMARY', 'MAX.DRAWDOWN'),
-    #             n.cgroup = c(6, 4, 2, 3),
-    #             col.rgroup = c("none", "#F9FAF0"),
-    #             col.columns = c(rep("none", 6),
-    #                             rep("#F1F0FA", 4),
-    #                             rep("none", 2),
-    #                             rep("#F1F0FA", 3))),
-    # SYMBOLS.RETURN %>%
-    #   extract(j = !c('TIME'), with = FALSE) %>%
-    #   myAssetsCorImagePlot(abbreviate = 10)
-  )
+                col.columns = c("none", "#F1F0FA"))
 }
 ```
+
+```{r Symbol Report stat, echo=F, fig.align='center', fig.width=10, message=FALSE, warning=FALSE}
+symbols <- unique(TICKETS.EDITED[, SYMBOL])
+n.symbols <- length(symbols)
+if (n.symbols > 1) {
+    copy(STATISTIC.SYMBOLS.OTHERS) %>%
+      extract(j = !c(1), with = FALSE) %>%
+      extract(
+        j = MDD.PERIOD := time.num.to.period.char(MDD.PERIOD)
+      ) %>%
+      htmlTable(rnames = F,
+                caption = 'OTHERS',
+                css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;",
+                rgroup = symbols,
+                n.rgroup = rep(3, n.symbols),
+                css.cell = rep('width: 64px;', 15),
+                cgroup = c('PROF.YIELD.RETURN', 'EXIT', 'SUMMARY', 'MAX.DRAWDOWN'),
+                n.cgroup = c(6, 4, 2, 3),
+                col.rgroup = c("none", "#F9FAF0"),
+                col.columns = c(rep("none", 6),
+                                rep("#F1F0FA", 4),
+                                rep("none", 2),
+                                rep("#F1F0FA", 3)))
+}
+```
+
+```{r Symbol Report corTable, echo=F, fig.align='center', fig.width=10, message=FALSE, warning=FALSE}
+symbols <- unique(TICKETS.EDITED[, SYMBOL])
+n.symbols <- length(symbols)
+if (n.symbols > 1) {
+    SYMBOLS.RETURN %>%
+      extract(j = !c('TIME'), with = FALSE) %>%
+      myAssetsCorImagePlot(abbreviate = 10)
+}
+```
+
+<!-- # -->
+<!-- # ```{r Symbol Report, echo=F, fig.align='center', fig.width=10, message=FALSE, warning=FALSE} -->
+<!-- # symbols <- unique(TICKETS.EDITED[, SYMBOL]) -->
+<!-- # n.symbols <- length(symbols) -->
+<!-- # if (n.symbols > 1) { -->
+<!-- #   tagList( -->
+<!-- #     tags$h2('Symbol Report'), -->
+<!-- #     copy(STATISTIC.SYMBOLS.PL) %>% -->
+<!-- #       extract(j = !c(1), with = FALSE) %>% -->
+<!-- #       setnames(c('PL', 'N', 'SUM', 'MEAN', 'MAX', 'SUM', 'MEAN', 'MAX', 'SUM', 'MEAN', 'MAX', 'MIN', 'N.MAX', 'N.MEAN', 'MAX', 'MEAN')) %>% -->
+<!-- #       extract( -->
+<!-- #         j = N := { -->
+<!-- #         win.percent <- N[c(TRUE, FALSE, FALSE)] / N[c(FALSE, FALSE, TRUE)] * 100 -->
+<!-- #         char.n <- as.character(N) -->
+<!-- #         char.n[c(TRUE, FALSE, FALSE)] <- sprintf('%s (%.2f)', char.n[c(TRUE, FALSE, FALSE)], win.percent) -->
+<!-- #         char.n -->
+<!-- #       }) %>% -->
+<!-- #       htmlTable(rnames = F, -->
+<!-- #                 caption = 'PROFIT vs LOSS', -->
+<!-- #                 css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;", -->
+<!-- #                 css.cell = rep('width: 75px;', 16), -->
+<!-- #                 rgroup = symbols, -->
+<!-- #                 n.rgroup = rep(3, n.symbols), -->
+<!-- #                 cgroup = c('', '', 'MONEY', 'PIP', 'VOLUME', 'CONTINUOUS'), -->
+<!-- #                 n.cgroup = c(1, 1, 3, 3, 4, 4), -->
+<!-- #                 col.rgroup = c("none", "#F9FAF0"), -->
+<!-- #                 col.columns = c("none", "#F1F0FA")), -->
+<!-- #     copy(STATISTIC.SYMBOLS.OTHERS) %>% -->
+<!-- #       extract(j = !c(1), with = FALSE) %>% -->
+<!-- #       extract( -->
+<!-- #         j = MDD.PERIOD := time.num.to.period.char(MDD.PERIOD) -->
+<!-- #       ) %>% -->
+<!-- #       htmlTable(rnames = F, -->
+<!-- #                 caption = 'OTHERS', -->
+<!-- #                 css.table = "width: 100%; margin-top: 1em; margin-bottom: 1em;", -->
+<!-- #                 rgroup = symbols, -->
+<!-- #                 n.rgroup = rep(3, n.symbols), -->
+<!-- #                 css.cell = rep('width: 64px;', 15), -->
+<!-- #                 cgroup = c('PROF.YIELD.RETURN', 'EXIT', 'SUMMARY', 'MAX.DRAWDOWN'), -->
+<!-- #                 n.cgroup = c(6, 4, 2, 3), -->
+<!-- #                 col.rgroup = c("none", "#F9FAF0"), -->
+<!-- #                 col.columns = c(rep("none", 6), -->
+<!-- #                                 rep("#F1F0FA", 4), -->
+<!-- #                                 rep("none", 2), -->
+<!-- #                                 rep("#F1F0FA", 3))), -->
+<!-- #     SYMBOLS.RETURN %>% -->
+<!-- #       extract(j = !c('TIME'), with = FALSE) %>% -->
+<!-- #       myAssetsCorImagePlot(abbreviate = 10) -->
+<!-- #   ) -->
+<!-- # } -->
+<!-- # ``` -->
 
 ## Tickets Report
 ```{r Tickets Report, echo=F}
